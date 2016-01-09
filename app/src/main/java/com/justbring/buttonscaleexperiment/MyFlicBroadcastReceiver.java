@@ -3,6 +3,8 @@ package com.justbring.buttonscaleexperiment;
 import android.content.Context;
 import android.util.Log;
 
+import org.json.JSONException;
+
 import io.flic.lib.FlicBroadcastReceiver;
 import io.flic.lib.FlicButton;
 
@@ -12,7 +14,7 @@ import io.flic.lib.FlicButton;
 public class MyFlicBroadcastReceiver extends FlicBroadcastReceiver {
     static long tStart;
     static long tEnd;
-    static Measurement measurement=new Measurement("Kotsos");
+    Measurement measurement=Measurement.getInstance();
     @Override
     protected void onRequestAppCredentials(Context context) {
         // Set app credentials by calling FlicManager.setAppCredentials here
@@ -22,6 +24,7 @@ public class MyFlicBroadcastReceiver extends FlicBroadcastReceiver {
     public void onButtonUpOrDown(Context context, FlicButton button, boolean wasQueued, int timeDiff, boolean isUp, boolean isDown) {
         if (isDown) {
             // Code for button up event here
+            measurement.nextRound();
             tStart=System.currentTimeMillis();
             Log.i("time","  " + tStart);
         } else if (isUp){
@@ -31,7 +34,11 @@ public class MyFlicBroadcastReceiver extends FlicBroadcastReceiver {
             Log.i("time","  " + elapsedSeconds);
             Log.i("time","  " + tStart);
             Log.i("time","  " + tEnd);
-            tStart=0;
+            try {
+                measurement.add(elapsedSeconds);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

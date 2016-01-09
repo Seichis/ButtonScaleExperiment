@@ -1,49 +1,43 @@
 package com.justbring.buttonscaleexperiment;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
-import io.flic.lib.FlicAppNotInstalledException;
-import io.flic.lib.FlicBroadcastReceiverFlags;
-import io.flic.lib.FlicButton;
-import io.flic.lib.FlicManager;
-import io.flic.lib.FlicManagerInitializedCallback;
+import com.parse.Parse;
 
 public class MainActivity extends AppCompatActivity {
+    Button startExperimentButton;
+    EditText inputParticipantText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        startExperimentButton = (Button) findViewById(R.id.start_experiment_btn);
+        inputParticipantText = (EditText) findViewById(R.id.input_participant_et);
+        Parse.enableLocalDatastore(this);
 
-        FlicManager.setAppCredentials("59eab426-39a4-4457-8e7d-2f67f9733d54", "d0ef92f6-a494-4f3d-96c0-841c6b434909", "ScaleMeasurement");
-        try {
-            FlicManager.getInstance(this, new FlicManagerInitializedCallback() {
-                @Override
-                public void onInitialized(FlicManager manager) {
-                    manager.initiateGrabButton(MainActivity.this);
-                }
-            });
-        } catch (FlicAppNotInstalledException err) {
-            Toast.makeText(this, "Flic App is not installed", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        FlicManager.getInstance(this, new FlicManagerInitializedCallback() {
+        Parse.initialize(this);
+        startExperimentButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onInitialized(FlicManager manager) {
-                FlicButton button = manager.completeGrabButton(requestCode, resultCode, data);
-                if (button != null) {
-                    button.registerListenForBroadcast(FlicBroadcastReceiverFlags.UP_OR_DOWN | FlicBroadcastReceiverFlags.REMOVED);
-                    Toast.makeText(MainActivity.this, "Grabbed a button", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MainActivity.this, "Did not grab any button", Toast.LENGTH_SHORT).show();
+            public void onClick(View v) {
+                String tmp = inputParticipantText.getText().toString();
+                if (tmp!=null){
+                    Intent startExperimentIntent=new Intent(MainActivity.this,ExperimentActivity.class);
+                    startExperimentIntent.putExtra("participant",tmp);
+                    startActivity(startExperimentIntent);
+                }else{
+                    Toast.makeText(MainActivity.this, "Add a participant name pls", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
     }
+
+
 }
