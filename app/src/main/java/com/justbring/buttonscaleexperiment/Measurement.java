@@ -11,8 +11,10 @@ import org.json.JSONObject;
 public class Measurement{
     static Measurement measurement = new Measurement();
     int round = 0;
+
     JSONObject buttonMeasumentsObj = new JSONObject();
     JSONObject sliderMeasumentsObj = new JSONObject();
+    JSONObject imagesShown = new JSONObject();
     String participant;
     // Interval is the time between seeing the image and pressing the button
     JSONObject intervals = new JSONObject();
@@ -52,7 +54,11 @@ public class Measurement{
     }
 
     public void addInterval() throws JSONException {
-        intervals.put(String.valueOf(round), this.pressButtonTimestamp-this.showImageTimestamp);
+        intervals.put(String.valueOf(round), (float) (this.pressButtonTimestamp - this.showImageTimestamp)/1000);
+    }
+
+    public void addImageShown(String value_) throws JSONException {
+        imagesShown.put(String.valueOf(round), value_);
     }
 
 
@@ -74,6 +80,7 @@ public class Measurement{
         parseMeasurement.put("buttonMeasurements",buttonMeasumentsObj);
         parseMeasurement.put("sliderMeasurements",sliderMeasumentsObj);
         parseMeasurement.put("intervals",intervals);
+        parseMeasurement.put("images",imagesShown);
         parseMeasurement.saveInBackground();
     }
 }

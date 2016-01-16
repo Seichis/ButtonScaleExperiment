@@ -2,15 +2,19 @@ package com.justbring.buttonscaleexperiment;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gc.materialdesign.views.ButtonFloat;
+import com.gc.materialdesign.views.ButtonRectangle;
 import com.gc.materialdesign.views.Slider;
 
 import org.json.JSONException;
@@ -28,25 +32,41 @@ import io.flic.lib.FlicManagerInitializedCallback;
 
 public class ExperimentActivity extends AppCompatActivity {
     static Measurement measurement = Measurement.getInstance();
-    Button startSessionButton, nextRoundButton;
-    ImageView imageView;
-    Slider slider;
+    static TextView feedbackTextView;
     static List<String> imageList = new ArrayList<>();
+    static boolean isButtonEnabled;
+    static boolean isLastRound;
+    ButtonFloat startSessionButton;
+    static ButtonRectangle nextRoundButton;
+    ImageView imageView;
+    static Slider slider;
+    Handler mHandler;
+    CountDownTimer mCountDownTimer;
 
     public static void setIsButtonEnabled(boolean isButtonEnabled) {
         ExperimentActivity.isButtonEnabled = isButtonEnabled;
+        feedbackTextView.setVisibility(View.VISIBLE);
+        nextRoundButton.setEnabled(true);
+        slider.setEnabled(true);
     }
 
-    static boolean isButtonEnabled = false;
+    public static boolean isButtonEnabled() {
+        return isButtonEnabled;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiment);
-        startSessionButton = (Button) findViewById(R.id.start_session_btn);
-        nextRoundButton = (Button) findViewById(R.id.next_button);
+        isButtonEnabled = false;
+        isLastRound = false;
+
+        startSessionButton = (ButtonFloat) findViewById(R.id.start_session_btn);
+        nextRoundButton = (ButtonRectangle) findViewById(R.id.next_button);
         imageView = (ImageView) findViewById(R.id.imageview_exper);
         imageView.setVisibility(View.INVISIBLE);
+        feedbackTextView = (TextView) findViewById(R.id.feedback_tv);
+        feedbackTextView.setVisibility(View.INVISIBLE);
         startSessionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,13 +77,15 @@ public class ExperimentActivity extends AppCompatActivity {
         nextRoundButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isButtonEnabled = false;
+                isButtonEnabled = true;
                 nextRound();
             }
         });
-        slider=(Slider)findViewById(R.id.slider_exper);
-        slider.setActivated(false);
+        nextRoundButton.setEnabled(false);
+        slider = (Slider) findViewById(R.id.slider_exper);
+        slider.setEnabled(false);
 
+        mHandler = new Handler();
         init();
 
         FlicManager.setAppCredentials("59eab426-39a4-4457-8e7d-2f67f9733d54", "d0ef92f6-a494-4f3d-96c0-841c6b434909", "ScaleMeasurement");
@@ -80,15 +102,26 @@ public class ExperimentActivity extends AppCompatActivity {
     }
 
     private void nextRound() {
-
         try {
-            measurement.addSliderValue(slider.getValue()/1000);
+            measurement.addSliderValue(((float)(slider.getValue()) / 1000f));
+            measurement.addImageShown(imageList.get(measurement.getRound()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        imageView.setImageDrawable(getImage(measurement.getRound()));
-        measurement.setShowImageTimestamp(System.currentTimeMillis());
+        feedbackTextView.setVisibility(View.INVISIBLE);
+        nextRoundButton.setEnabled(false);
+        slider.setEnabled(false);
+
+        slider.setValue(0);
+        if (isLastRound || imageList.size()-1==measurement.getRound()) {
+            this.finish();
+            return;
+        }
+
         measurement.nextRound();
+        setImageView(measurement.getRound());
+        measurement.setShowImageTimestamp(System.currentTimeMillis());
+
     }
 
     private void startSession() {
@@ -99,9 +132,21 @@ public class ExperimentActivity extends AppCompatActivity {
             Toast.makeText(ExperimentActivity.this, "An error loading the image list", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
-        slider.setActivated(true);
-        imageView.setImageDrawable(getImage(measurement.getRound()));
+        setImageView(measurement.getRound());
+        imageView.setVisibility(View.VISIBLE);
         measurement.setShowImageTimestamp(System.currentTimeMillis());
+        CountDownTimer mCountDownTimer = new CountDownTimer(10000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                Toast.makeText(ExperimentActivity.this, String.valueOf(millisUntilFinished/60000), Toast.LENGTH_SHORT).show();
+            }
+
+            public void onFinish() {
+                isLastRound = true;
+                Toast.makeText(ExperimentActivity.this, "Last round", Toast.LENGTH_SHORT).show();
+            }
+        };
+        mCountDownTimer.start();
     }
 
     @Override
@@ -110,6 +155,7 @@ public class ExperimentActivity extends AppCompatActivity {
         measurement.save();
         Toast.makeText(this, "Saved measurement successfully", Toast.LENGTH_LONG).show();
         measurement.clear();
+        mCountDownTimer=null;
     }
 
     private void init() {
@@ -134,24 +180,42 @@ public class ExperimentActivity extends AppCompatActivity {
         });
     }
 
-    public Drawable getImage(int round) {
-        Drawable image = ContextCompat.getDrawable(getApplicationContext(), R.drawable.background_button);
-        // load image
-        try {
-            // get input stream
-            String imageFile=imageList.get(round);
-            InputStream ims = getAssets().open(imageFile);
-            // load image as Drawable
-            image = Drawable.createFromStream(ims, null);
-            // set image to ImageView
-        } catch (IOException ex) {
-            Toast.makeText(ExperimentActivity.this, "An error occured grabbing the image", Toast.LENGTH_SHORT).show();
-        }
-        return image;
-    }
+    public void setImageView(final int round) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                Bitmap image = null;
+                try {
+                    // get input stream
+                    String imageFile = imageList.get(round);
+                    Log.i("image", imageFile + "passss 111");
 
-    public static boolean isButtonEnabled() {
-        return isButtonEnabled;
+                    InputStream ims = ExperimentActivity.this.getAssets().open("image/" + imageFile);
+                    Log.i("image", imageFile + "passss 222");
+
+                    // load image as Bitmap
+                    image = BitmapFactory.decodeStream(ims);
+                    ims.close();
+
+                } catch (IOException ex) {
+                    Log.i("imageerror", ex.toString());
+                    Toast.makeText(ExperimentActivity.this, "An error occured grabbing the image", Toast.LENGTH_SHORT).show();
+                }
+
+                final Bitmap finalImage = image;
+                mHandler.post((new Runnable() {
+                    @Override
+                    public void run() {
+                        imageView.setImageBitmap(finalImage);
+                    }
+                }));
+
+            }
+        };
+
+        Thread mThread = new Thread(runnable);
+        mThread.start();
+
     }
 
 }

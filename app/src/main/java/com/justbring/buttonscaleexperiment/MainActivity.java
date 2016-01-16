@@ -20,9 +20,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         startExperimentButton = (Button) findViewById(R.id.start_experiment_btn);
         inputParticipantText = (EditText) findViewById(R.id.input_participant_et);
-        Parse.enableLocalDatastore(this);
 
-        Parse.initialize(this);
         startExperimentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
