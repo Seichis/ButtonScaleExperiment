@@ -11,8 +11,22 @@ import org.json.JSONObject;
 public class Measurement{
     static Measurement measurement = new Measurement();
     int round = 0;
-    JSONObject measumentsObj = new JSONObject();
+    JSONObject buttonMeasumentsObj = new JSONObject();
+    JSONObject sliderMeasumentsObj = new JSONObject();
     String participant;
+    // Interval is the time between seeing the image and pressing the button
+    JSONObject intervals = new JSONObject();
+    long showImageTimestamp,pressButtonTimestamp;
+
+    public void setShowImageTimestamp(long showImageTimestamp) {
+        this.showImageTimestamp = showImageTimestamp;
+    }
+
+
+    public void setPressButtonTimestamp(long pressButtonTimestamp) {
+        this.pressButtonTimestamp = pressButtonTimestamp;
+    }
+
     private Measurement() {
 
     }
@@ -29,8 +43,16 @@ public class Measurement{
         round++;
     }
 
-    public void add(double secondsPressed_) throws JSONException {
-        measumentsObj.put(String.valueOf(round), secondsPressed_);
+    public void addButtonValue(double secondsPressed_) throws JSONException {
+        buttonMeasumentsObj.put(String.valueOf(round), secondsPressed_);
+    }
+
+    public void addSliderValue(float value_) throws JSONException {
+        sliderMeasumentsObj.put(String.valueOf(round), value_);
+    }
+
+    public void addInterval() throws JSONException {
+        intervals.put(String.valueOf(round), this.pressButtonTimestamp-this.showImageTimestamp);
     }
 
 
@@ -40,14 +62,18 @@ public class Measurement{
 
     public void clear() {
         round = 0;
-        this.measumentsObj = new JSONObject();
+        this.buttonMeasumentsObj = new JSONObject();
+        this.intervals = new JSONObject();
+        this.sliderMeasumentsObj = new JSONObject();
         this.participant = "";
     }
 
     public void save(){
         ParseObject parseMeasurement=new ParseObject("Measurement");
         parseMeasurement.put("participant",participant);
-        parseMeasurement.put("measurements",measumentsObj);
+        parseMeasurement.put("buttonMeasurements",buttonMeasumentsObj);
+        parseMeasurement.put("sliderMeasurements",sliderMeasumentsObj);
+        parseMeasurement.put("intervals",intervals);
         parseMeasurement.saveInBackground();
     }
 }

@@ -14,7 +14,8 @@ import io.flic.lib.FlicButton;
 public class MyFlicBroadcastReceiver extends FlicBroadcastReceiver {
     static long tStart;
     static long tEnd;
-    Measurement measurement=Measurement.getInstance();
+    Measurement measurement = Measurement.getInstance();
+
     @Override
     protected void onRequestAppCredentials(Context context) {
         // Set app credentials by calling FlicManager.setAppCredentials here
@@ -22,22 +23,26 @@ public class MyFlicBroadcastReceiver extends FlicBroadcastReceiver {
 
     @Override
     public void onButtonUpOrDown(Context context, FlicButton button, boolean wasQueued, int timeDiff, boolean isUp, boolean isDown) {
-        if (isDown) {
-            // Code for button up event here
-            measurement.nextRound();
-            tStart=System.currentTimeMillis();
-            Log.i("time","  " + tStart);
-        } else if (isUp){
-            tEnd = System.currentTimeMillis();
-            long tDelta = tEnd - tStart;
-            double elapsedSeconds = tDelta / 1000.0;
-            Log.i("time","  " + elapsedSeconds);
-            Log.i("time","  " + tStart);
-            Log.i("time","  " + tEnd);
-            try {
-                measurement.add(elapsedSeconds);
-            } catch (JSONException e) {
-                e.printStackTrace();
+        if (ExperimentActivity.isButtonEnabled) {
+            if (isDown) {
+                // Code for button up event here
+                tStart = System.currentTimeMillis();
+                Log.i("time", "  " + tStart);
+            } else if (isUp) {
+                tEnd = System.currentTimeMillis();
+                long tDelta = tEnd - tStart;
+                double elapsedSeconds = tDelta / 1000.0;
+                Log.i("time", "  " + elapsedSeconds);
+                Log.i("time", "  " + tStart);
+                Log.i("time", "  " + tEnd);
+                try {
+                    measurement.addButtonValue(elapsedSeconds);
+                    measurement.setPressButtonTimestamp(System.currentTimeMillis());
+                    measurement.addInterval();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                ExperimentActivity.setIsButtonEnabled(false);
             }
         }
     }
