@@ -10,14 +10,36 @@
     tools:context="com.justbring.buttonscaleexperiment.MainActivity">
 
     <EditText
+        android:id="@+id/input_participant_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/input_participant_et"/>
+        android:hint="Add your full name here"/>
 
-   <Button
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:id="@+id/start_experiment_btn"
-       android:layout_below="@+id/input_participant_et"
-       />
+    <Button
+        android:id="@+id/start_experiment_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/input_participant_et"
+        android:layout_centerHorizontal="true"
+        android:text="Start the experiment" />
+
+    <TextView
+        android:id="@+id/instr_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/start_experiment_btn"
+        android:layout_centerHorizontal="true"
+        android:text="@string/instructions_header"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/info_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/instr_tv"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="@string/experiment_info"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
 </RelativeLayout>
