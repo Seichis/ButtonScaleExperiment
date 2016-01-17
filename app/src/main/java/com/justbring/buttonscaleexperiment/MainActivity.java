@@ -12,7 +12,7 @@ import com.parse.Parse;
 
 public class MainActivity extends AppCompatActivity {
     Button startExperimentButton;
-    EditText inputParticipantText;
+    EditText inputParticipantText,inputMinutes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,14 +20,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         startExperimentButton = (Button) findViewById(R.id.start_experiment_btn);
         inputParticipantText = (EditText) findViewById(R.id.input_participant_et);
+        inputMinutes = (EditText) findViewById(R.id.choose_time_exp);
 
         startExperimentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String tmp = inputParticipantText.getText().toString();
+                String minutes=inputMinutes.getText().toString();
                 if (tmp!=null){
                     Intent startExperimentIntent=new Intent(MainActivity.this,ExperimentActivity.class);
                     startExperimentIntent.putExtra("participant",tmp);
+                    startExperimentIntent.putExtra("time",Integer.valueOf(minutes)*60*1000);
                     startActivity(startExperimentIntent);
                 }else{
                     Toast.makeText(MainActivity.this, "Add a participant name pls", Toast.LENGTH_SHORT).show();

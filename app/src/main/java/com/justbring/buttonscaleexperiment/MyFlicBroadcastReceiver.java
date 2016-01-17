@@ -7,6 +7,7 @@ import org.json.JSONException;
 
 import io.flic.lib.FlicBroadcastReceiver;
 import io.flic.lib.FlicButton;
+import io.flic.lib.FlicManager;
 
 /**
  * Created by User1 on 8/1/2016.
@@ -19,6 +20,8 @@ public class MyFlicBroadcastReceiver extends FlicBroadcastReceiver {
     @Override
     protected void onRequestAppCredentials(Context context) {
         // Set app credentials by calling FlicManager.setAppCredentials here
+        FlicManager.setAppCredentials("59eab426-39a4-4457-8e7d-2f67f9733d54", "d0ef92f6-a494-4f3d-96c0-841c6b434909", "ScaleMeasurement");
+
     }
 
     @Override

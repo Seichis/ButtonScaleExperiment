@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,37 +9,52 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.justbring.buttonscaleexperiment.MainActivity">
 
-    <EditText
-        android:id="@+id/input_participant_et"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Add your full name here"/>
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/start_experiment_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/input_participant_et"
-        android:layout_centerHorizontal="true"
-        android:text="Start the experiment" />
+        <EditText
+            android:id="@+id/input_participant_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Add your full name here" />
 
-    <TextView
-        android:id="@+id/instr_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/start_experiment_btn"
-        android:layout_centerHorizontal="true"
-        android:text="@string/instructions_header"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        <Button
+            android:id="@+id/start_experiment_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/choose_time_exp"
+            android:layout_centerHorizontal="true"
+            android:text="Start the experiment" />
 
-    <TextView
-        android:id="@+id/info_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/instr_tv"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:text="@string/experiment_info"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        <TextView
+            android:id="@+id/instr_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/start_experiment_btn"
+            android:layout_centerHorizontal="true"
+            android:text="@string/instructions_header"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/info_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/instr_tv"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="@string/experiment_info"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/choose_time_exp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/input_participant_et"
+            android:layout_centerHorizontal="true"
+            android:hint="Minutes"
+            android:inputType="number" />
+
+
+    </RelativeLayout>
+</ScrollView>

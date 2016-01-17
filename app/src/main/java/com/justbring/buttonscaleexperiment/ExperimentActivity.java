@@ -42,6 +42,8 @@ public class ExperimentActivity extends AppCompatActivity {
     static Slider slider;
     Handler mHandler;
     CountDownTimer mCountDownTimer;
+    FlicButton button;
+
 
     public static void setIsButtonEnabled(boolean isButtonEnabled) {
         ExperimentActivity.isButtonEnabled = isButtonEnabled;
@@ -125,6 +127,7 @@ public class ExperimentActivity extends AppCompatActivity {
     }
 
     private void startSession() {
+        int time=getIntent().getIntExtra("time",0);
         startSessionButton.setVisibility(View.GONE);
         try {
             imageList = Utils.getImageList(this.getApplicationContext());
@@ -135,10 +138,10 @@ public class ExperimentActivity extends AppCompatActivity {
         setImageView(measurement.getRound());
         imageView.setVisibility(View.VISIBLE);
         measurement.setShowImageTimestamp(System.currentTimeMillis());
-        CountDownTimer mCountDownTimer = new CountDownTimer(10000, 1000) {
+        CountDownTimer mCountDownTimer = new CountDownTimer(time, 30000) {
 
             public void onTick(long millisUntilFinished) {
-                Toast.makeText(ExperimentActivity.this, String.valueOf(millisUntilFinished/60000), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(ExperimentActivity.this, String.valueOf(millisUntilFinished/60000), Toast.LENGTH_SHORT).show();
             }
 
             public void onFinish() {
@@ -156,6 +159,8 @@ public class ExperimentActivity extends AppCompatActivity {
         Toast.makeText(this, "Saved measurement successfully", Toast.LENGTH_LONG).show();
         measurement.clear();
         mCountDownTimer=null;
+        button.setActiveMode(false);
+        FlicManager.destroyInstance();
     }
 
     private void init() {
@@ -169,9 +174,10 @@ public class ExperimentActivity extends AppCompatActivity {
         FlicManager.getInstance(this, new FlicManagerInitializedCallback() {
             @Override
             public void onInitialized(FlicManager manager) {
-                FlicButton button = manager.completeGrabButton(requestCode, resultCode, data);
+                button = manager.completeGrabButton(requestCode, resultCode, data);
                 if (button != null) {
                     button.registerListenForBroadcast(FlicBroadcastReceiverFlags.UP_OR_DOWN | FlicBroadcastReceiverFlags.REMOVED);
+                    button.setActiveMode(true);
                     Toast.makeText(ExperimentActivity.this, "Grabbed a button", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(ExperimentActivity.this, "Did not grab any button", Toast.LENGTH_SHORT).show();
