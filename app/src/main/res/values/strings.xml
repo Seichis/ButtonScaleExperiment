@@ -4,7 +4,7 @@
 
     <string name="parse_app_id">jiATYMw4og93ignJ0AeuoigsmqgrZS0ndEy2ZK4a</string>
     <string name="parse_client_key">GXAv1dib82RWKMpnr8F0QByrwzYEEXGTIfmx7UcJ</string>
-    <string name="experiment_info">You are going to see pictures of faces expressing an emotion.\n\tYou have to rate HOW HAPPY you think the person in each picture is. \n\tYou are going to do that first by pressing the Flic button which will be provided to you (the longer you hold the button the happier the person in the picture is.). \n\tThen you will rate the same emotion on a slider underneath the picture. \n\tAfterwards you move to the next picture by pressing the \"Next\" button underneath the slider. Keep in my mind that you have to rate with the button first.The experiment lasts 5 minutes..</string>
+    <string name="experiment_info">You are going to see pictures of faces expressing an emotion (Very happy, somewhat happy, neutral, somewhat sad, very sad).\n\tYou have to rate HOW SAD you think the person in each picture is. \n\tYou are going to do that first by pressing the Flic button which will be provided to you (the LONGER you hold the button the SADDER the person in the picture is.). \n\tThen you will rate the same emotion on a slider underneath the picture. \n\tAfterwards you move to the next picture by pressing the \"Next\" button underneath the slider. Keep in my mind that you have to rate with the button first.The experiment lasts 5 minutes..</string>
     <string name="instructions_header">Instructions</string>
 
 </resources>

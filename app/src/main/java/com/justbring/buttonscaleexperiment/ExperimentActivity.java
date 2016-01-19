@@ -138,7 +138,7 @@ public class ExperimentActivity extends AppCompatActivity {
         setImageView(measurement.getRound());
         imageView.setVisibility(View.VISIBLE);
         measurement.setShowImageTimestamp(System.currentTimeMillis());
-        CountDownTimer mCountDownTimer = new CountDownTimer(time, 30000) {
+        CountDownTimer mCountDownTimer = new CountDownTimer(600000, 30000) {
 
             public void onTick(long millisUntilFinished) {
 //                Toast.makeText(ExperimentActivity.this, String.valueOf(millisUntilFinished/60000), Toast.LENGTH_SHORT).show();
