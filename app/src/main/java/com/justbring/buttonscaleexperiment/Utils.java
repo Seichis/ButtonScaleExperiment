@@ -29,7 +29,7 @@ public class Utils {
     public static List<String> getImageList(Context context) throws IOException
     {
         AssetManager assetManager =context.getAssets();
-        String[] files = assetManager.list("images");
+        String[] files = assetManager.list("image");
         List<String> it= Arrays.asList(files);
 
         // Shuffle the list

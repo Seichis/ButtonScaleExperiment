@@ -8,7 +8,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.BubbleChart;
+import com.github.mikephil.charting.charts.CandleStickChart;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.charts.RadarChart;
+import com.github.mikephil.charting.charts.ScatterChart;
 import com.parse.Parse;
+
+import butterknife.Bind;
 
 public class MainActivity extends AppCompatActivity {
     Button startExperimentButton;
@@ -28,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
                 String tmp = inputParticipantText.getText().toString();
                 String minutes=inputMinutes.getText().toString();
                 if (tmp!=null){
-                    Intent startExperimentIntent=new Intent(MainActivity.this,ExperimentActivity.class);
+                    Intent startExperimentIntent=new Intent(MainActivity.this,FlicFirstActivity.class);
                     startExperimentIntent.putExtra("participant",tmp);
                     startExperimentIntent.putExtra("time",Integer.valueOf(minutes)*60*1000);
                     startActivity(startExperimentIntent);
@@ -37,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+//        startActivity(new Intent(MainActivity.this,GraphsActivity.class));
 
     }
 
